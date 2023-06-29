@@ -36,6 +36,7 @@ pub fn question_one() {
         }
     }
     println!("total size: {}", total_size);
+    println!("{:?}", directory_size_map);
 }
 
 fn handle_cd(instruction: &str, directory_stack: &mut Vec<String>) {
@@ -60,9 +61,12 @@ fn handle_filesize(
     let caps = FILESIZE_PATTERN.captures(instruction).unwrap();
     let new_filesize: u128 = caps.get(1).unwrap().as_str().parse().unwrap();
 
+    println!("instruction: {}", instruction);
     for (i, directory) in directory_stack.iter().enumerate() {
-        let dir_name = directory_stack[0..i].join("/");
-        match directory_size_map.get(directory) {
+        let dir_name = directory_stack[0..=i].join("/");
+        println!("directory_stack: {:?}", directory_stack);
+        println!("dir_name: {}", dir_name);
+        match directory_size_map.get(&dir_name) {
             Some(existing_filesize) => {
                 directory_size_map.insert(dir_name, existing_filesize + new_filesize);
             }
@@ -72,33 +76,3 @@ fn handle_filesize(
         }
     }
 }
-
-// use std::iter::Peekable;
-
-// pub fn question_one() {
-//     let (d, mut s) = (include_bytes!("../public/day7.txt"), 0);
-//     sh(&mut d.split(|b| b == &b'\n').peekable(), &mut s);
-//     println!("{}", s);
-// }
-
-// fn sh(lines: &mut Peekable<impl Iterator<Item = &'static [u8]>>, sum: &mut u64) -> u64 {
-//     let mut size = 0;
-//     while let Some(i) = lines.next() {
-//         match i {
-//             b"$ cd .." => break,
-//             _ if &i[0..3] == b"$ l" => {
-//                 size = std::iter::from_fn(|| lines.next_if(|i| i[0] != b'$'))
-//                     .filter(|i| i[0] != b'd')
-//                     .filter_map(|i| atoi::atoi::<u64>(i.split(|b| b == &b' ').next().unwrap()))
-//                     .sum()
-//             }
-//             _ => size += sh(lines, sum),
-//         }
-//     }
-//     if size <= 100_000 {
-//         *sum += size;
-//     }
-//     size
-// }
-
-//1367870
