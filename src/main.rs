@@ -4,6 +4,7 @@ mod day_3;
 mod day_4;
 mod day_5;
 mod day_6;
+mod day_7;
 
 fn main() {
     // day_1::question_one();
@@ -16,6 +17,7 @@ fn main() {
     // day_4::question_two();
     // day_5::question_one();
     // day_5::question_two();
-    day_6::question_one();
-    day_6::question_two();
+    // day_6::question_one();
+    // day_6::question_two();
+    day_7::question_one();
 }

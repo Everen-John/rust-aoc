@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use std::{fs, marker};
+use std::fs;
 
 fn read_input() -> String {
     let file_path = "public/day6.txt";
