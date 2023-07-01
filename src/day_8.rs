@@ -1,11 +1,4 @@
-use lazy_static::lazy_static;
-use regex::Regex;
-use std::{
-    collections::HashMap,
-    fs::{self, read},
-    io::BufRead,
-    isize,
-};
+use std::fs::{self};
 
 fn read_input() -> String {
     let file_path = "public/day8.txt";
