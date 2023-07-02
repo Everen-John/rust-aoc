@@ -1,10 +1,12 @@
-use lazy_static::lazy_static;
+use lazy_static::{__Deref, lazy_static};
 use regex::Regex;
 use std::{
     borrow::{Borrow, BorrowMut},
     cell::RefCell,
     collections::HashSet,
+    collections::LinkedList,
     fs::{self},
+    ops::DerefMut,
     rc::Rc,
 };
 
@@ -125,53 +127,48 @@ fn t_is_around_h_flag(h: &Point, t: &Point) -> bool {
     })
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq)]
 struct LinkedPoint {
-    index: i32,
+    index: i8,
     x_current: i32,
     y_current: i32,
     x_old: Option<i32>,
     y_old: Option<i32>,
-    // head: Option<Box<LinkedPoint>>,
-    tail: Option<Box<LinkedPoint>>,
+}
+
+impl ToString for LinkedPoint {
+    fn to_string(&self) -> String {
+        format!("({},{})", self.x_current, self.y_current)
+    }
 }
 
 impl LinkedPoint {
-    fn new(i: i32) -> Self {
+    fn old_to_string(&self) -> String {
+        format!("({},{})", self.x_old.unwrap_or(0), self.y_old.unwrap_or(0))
+    }
+
+    fn new(i: i8) -> Self {
         LinkedPoint {
             index: i,
             x_current: 0,
             y_current: 0,
             x_old: None,
             y_old: None,
-            tail: None,
         }
     }
 
-    fn next(self) -> Option<Box<LinkedPoint>> {
-        self.tail
+    fn current_to_old(&mut self) {
+        self.x_old = Some(self.x_current);
+        self.y_old = Some(self.y_current);
     }
 
-    fn peek(&self) -> Option<Box<LinkedPoint>> {
-        self.tail.clone()
+    fn eq(&self, other: &LinkedPoint) -> bool {
+        self.x_current == other.x_current && other.y_current == self.y_current
     }
 
-    fn old_string(&self) -> String {
-        format!("{},{}", &self.x_old.unwrap(), &self.y_old.unwrap()).to_string()
-    }
-
-    fn eq(self, linked_point: Self) -> bool {
-        linked_point.x_current == self.x_current && linked_point.y_current == self.y_current
-    }
-
-    fn index(&self) -> &i32 {
-        &self.index
-    }
-}
-
-impl ToString for LinkedPoint {
-    fn to_string(&self) -> String {
-        format!("{},{}", &self.x_current, &self.y_current).to_string()
+    fn assign_new_point(&mut self, other: LinkedPoint) {
+        self.x_current = other.x_old.unwrap();
+        self.y_current = other.y_old.unwrap();
     }
 }
 
@@ -179,12 +176,15 @@ pub fn question_two() {
     let binding = read_input();
     let content: Vec<String> = binding.split('\n').map(|x| x.to_string()).collect();
 
-    let mut areas_point_9_visited: HashSet<String> = HashSet::new();
-    areas_point_9_visited.insert("0,0".to_string());
-    let mut points: Vec<LinkedPoint> = Vec::new();
+    let mut linked_points: LinkedList<LinkedPoint> = LinkedList::new();
 
-    let mut linked_points = build_linked_points(9).unwrap();
-    println!("{:?}", linked_points);
+    for i in 0..9 {
+        let linked_point = LinkedPoint::new(i);
+        linked_points.push_back(linked_point);
+    }
+
+    let mut areas_t_visited: HashSet<String> = HashSet::new();
+    areas_t_visited.insert(linked_points.back().unwrap().to_string());
 
     content.iter().for_each(|instruction| {
         let caps = LINE_PATTERN.captures(instruction).unwrap();
@@ -192,91 +192,75 @@ pub fn question_two() {
         let magnitude: i32 = caps.get(2).unwrap().as_str().parse().unwrap();
 
         println!("Going {} {} times", direction, magnitude);
-        // let mut h = *points.get(0).unwrap();
-        let mut h = &mut linked_points;
-        for _ in 1..=magnitude {
-            (h.x_old, h.y_old) = (Some(h.x_current), Some(h.y_current));
-            match direction {
-                "U" => {
-                    h.x_current -= 1;
-                }
-                "D" => {
-                    h.x_current += 1;
-                }
-                "L" => {
-                    h.y_current -= 1;
-                }
-                "R" => {
-                    h.y_current += 1;
-                }
-                _ => (),
-            }
-            println!("Point 9 moves from {} to {}", h.old_string(), h.to_string());
-
-            // let mut tail = h.peek().unwrap();
-            let mut tail = h;
-
-            while true {
-                let mut nt_option = tail.next();
-                match nt_option {
-                    Some(ref mut nt) => {
-                        if !linked_point_t_is_around_h(&tail, &nt) {
-                            println!(
-                                "point {} ({}) is going to move to where point {} ({}) was",
-                                nt.index,
-                                nt.to_string(),
-                                tail.index,
-                                tail.to_string()
-                            );
-                            nt.x_old = Some(nt.x_current);
-                            nt.y_old = Some(nt.y_current);
-                            nt.x_current = tail.clone().x_old.unwrap();
-                            nt.y_current = tail.clone().y_old.unwrap();
-                            println!(
-                                "point {} ({}) and point {} ({})",
-                                nt.index,
-                                nt.to_string(),
-                                tail.index,
-                                tail.to_string()
-                            );
-
-                            if nt.peek().is_none() {
-                                println!("point 0 has visited {}!", nt.to_string());
-                                areas_point_9_visited.insert(nt.to_string());
-                            }
-                        }
-                        tail = nt;
+        for i in 1..=magnitude {
+            println!("Going R {} more times", magnitude - i);
+            {
+                let mut head = linked_points.front_mut().unwrap();
+                // h.current_to_old();
+                head.x_old = Some(head.x_current);
+                head.y_old = Some(head.y_current);
+                // h.current_to_old();
+                match direction {
+                    "U" => {
+                        head.x_current -= 1;
                     }
-                    None => break,
+                    "D" => {
+                        head.x_current += 1;
+                    }
+                    "L" => {
+                        head.y_current -= 1;
+                    }
+                    "R" => {
+                        head.y_current += 1;
+                    }
+                    _ => (),
+                }
+                println!("Head is now at {} ", head.to_string());
+            }
+
+            let mut lp_iter = linked_points.iter();
+            let mut h_option = lp_iter.next();
+            let mut t_option = lp_iter.next();
+
+            loop {
+                if t_option.is_some() {
+                    let mut h_ref = h_option.unwrap();
+                    let mut h = h_ref.borrow_mut();
+                    let mut t_ref = t_option.unwrap();
+                    let mut t = t_ref.borrow_mut();
+
+                    if !linked_t_is_around_h_flag(&h, &t) {
+                        t.current_to_old();
+
+                        t.x_current = h.x_old.unwrap();
+                        t.y_current = h.y_old.unwrap();
+
+                        if t.index == 8 {
+                            println!("Point {} has visited {}", t.index, t.to_string());
+                            areas_t_visited.insert(t.to_string());
+                        }
+                    }
+                    h_option = t_option;
+                    t_option = lp_iter.next();
+                } else {
+                    break;
                 }
             }
         }
     });
     println!(
         "T has visited {} locations at least once",
-        areas_point_9_visited.len()
+        areas_t_visited.len()
     );
 }
 
-fn build_linked_points<'a>(i: i32) -> Option<Box<LinkedPoint>> {
-    if i > 0 {
-        let mut point = LinkedPoint::new(i);
-        point.tail = build_linked_points(i - 1);
-        Some(Box::new(point))
-        // point
-    } else {
-        Some(Box::new(LinkedPoint::new(i)))
-    }
-}
-
-fn linked_point_t_is_around_h(h: &Box<LinkedPoint>, t: &Box<LinkedPoint>) -> bool {
+fn linked_t_is_around_h_flag(h: &LinkedPoint, t: &LinkedPoint) -> bool {
     let on_top = LinkedPoint {
         index: 0,
         x_current: h.x_current,
         y_current: h.y_current,
-        x_old: h.x_old,
-        y_old: h.y_old,
-        tail: None,
+        x_old: None,
+        y_old: None,
     };
     let top_left = LinkedPoint {
         index: 0,
@@ -284,7 +268,6 @@ fn linked_point_t_is_around_h(h: &Box<LinkedPoint>, t: &Box<LinkedPoint>) -> boo
         y_current: h.y_current - 1,
         x_old: None,
         y_old: None,
-        tail: None,
     };
     let top = LinkedPoint {
         index: 0,
@@ -292,7 +275,6 @@ fn linked_point_t_is_around_h(h: &Box<LinkedPoint>, t: &Box<LinkedPoint>) -> boo
         y_current: h.y_current,
         x_old: None,
         y_old: None,
-        tail: None,
     };
     let top_right = LinkedPoint {
         index: 0,
@@ -300,7 +282,6 @@ fn linked_point_t_is_around_h(h: &Box<LinkedPoint>, t: &Box<LinkedPoint>) -> boo
         y_current: h.y_current + 1,
         x_old: None,
         y_old: None,
-        tail: None,
     };
     let right = LinkedPoint {
         index: 0,
@@ -308,7 +289,6 @@ fn linked_point_t_is_around_h(h: &Box<LinkedPoint>, t: &Box<LinkedPoint>) -> boo
         y_current: h.y_current + 1,
         x_old: None,
         y_old: None,
-        tail: None,
     };
     let bottom_right = LinkedPoint {
         index: 0,
@@ -316,7 +296,6 @@ fn linked_point_t_is_around_h(h: &Box<LinkedPoint>, t: &Box<LinkedPoint>) -> boo
         y_current: h.y_current + 1,
         x_old: None,
         y_old: None,
-        tail: None,
     };
     let bottom = LinkedPoint {
         index: 0,
@@ -324,7 +303,6 @@ fn linked_point_t_is_around_h(h: &Box<LinkedPoint>, t: &Box<LinkedPoint>) -> boo
         y_current: h.y_current,
         x_old: None,
         y_old: None,
-        tail: None,
     };
     let bottom_left = LinkedPoint {
         index: 0,
@@ -332,7 +310,6 @@ fn linked_point_t_is_around_h(h: &Box<LinkedPoint>, t: &Box<LinkedPoint>) -> boo
         y_current: h.y_current - 1,
         x_old: None,
         y_old: None,
-        tail: None,
     };
     let left = LinkedPoint {
         index: 0,
@@ -340,7 +317,6 @@ fn linked_point_t_is_around_h(h: &Box<LinkedPoint>, t: &Box<LinkedPoint>) -> boo
         y_current: h.y_current - 1,
         x_old: None,
         y_old: None,
-        tail: None,
     };
 
     let boundaries: [LinkedPoint; 9] = [
@@ -355,13 +331,13 @@ fn linked_point_t_is_around_h(h: &Box<LinkedPoint>, t: &Box<LinkedPoint>) -> boo
         left,
     ];
     boundaries.iter().any(|point| {
-        if point.x_current == t.x_current && point.y_current == t.y_current {
+        if point.eq(t) {
             println!(
-                " POINT {} ({}) is around POINT {} ({})",
+                "T {} ({}) is around H {} ({})",
                 t.index,
                 t.to_string(),
                 h.index,
-                h.to_string(),
+                h.to_string()
             );
             true
         } else {
