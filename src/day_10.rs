@@ -59,51 +59,20 @@ pub fn question_one() {
 
         if caps.is_some() {
             for _ in 0..2 {
-                cycle += 1;
-
-                addx_instructions.iter_mut().for_each(|addx| {
-                    addx.completion_pointer -= 1;
-
-                    if addx.completion_pointer == 0 {
-                        println!("ADDX VALUE {} SUCCESSFULLY ADDED", addx.value);
-                        x += addx.value;
-                        println!("x IS NOW {}", x);
-                    }
-                });
-                addx_instructions.retain(|addx| addx.completion_pointer != 0);
-
-                match cycle {
-                    20 | 60 | 100 | 140 | 180 | 220 => {
-                        println!("{} * {} = {}", cycle, x, cycle * x);
-
-                        signal_strength_sum += cycle * x;
-                        println!("Total signal strength: {}", signal_strength_sum);
-                    }
-                    _ => (),
-                }
+                perform_a_cycle(
+                    &mut x,
+                    &mut cycle,
+                    &mut addx_instructions,
+                    &mut signal_strength_sum,
+                )
             }
         } else {
-            cycle += 1;
-
-            addx_instructions.iter_mut().for_each(|addx| {
-                addx.completion_pointer -= 1;
-
-                if addx.completion_pointer == 0 {
-                    println!("ADDX VALUE {} SUCCESSFULLY ADDED", addx.value);
-                    x += addx.value;
-                    println!("x IS NOW {}", x);
-                }
-            });
-            addx_instructions.retain(|addx| addx.completion_pointer != 0);
-            match cycle {
-                20 | 60 | 100 | 140 | 180 | 220 => {
-                    println!("{} * {} = {}", cycle, x, cycle * x);
-
-                    signal_strength_sum += cycle * x;
-                    println!("Total signal strength: {}", signal_strength_sum);
-                }
-                _ => (),
-            }
+            perform_a_cycle(
+                &mut x,
+                &mut cycle,
+                &mut addx_instructions,
+                &mut signal_strength_sum,
+            )
         }
 
         println!("CYCLE {} END============", cycle);
@@ -117,4 +86,34 @@ pub fn question_one() {
     }
 
     println!("{}", signal_strength_sum);
+}
+
+fn perform_a_cycle(
+    x: &mut i32,
+    cycle: &mut i32,
+    addx_instructions: &mut Vec<Instruction>,
+    signal_strength_sum: &mut i32,
+) {
+    *cycle += 1;
+
+    addx_instructions.iter_mut().for_each(|addx| {
+        addx.completion_pointer -= 1;
+
+        if addx.completion_pointer == 0 {
+            println!("ADDX VALUE {} SUCCESSFULLY ADDED", addx.value);
+            *x += addx.value;
+            println!("x IS NOW {}", x);
+        }
+    });
+    addx_instructions.retain(|addx| addx.completion_pointer != 0);
+
+    match cycle {
+        20 | 60 | 100 | 140 | 180 | 220 => {
+            println!("{} * {} = {}", *cycle, *x, *cycle * *x);
+
+            *signal_strength_sum += *cycle * *x;
+            println!("Total signal strength: {}", signal_strength_sum);
+        }
+        _ => (),
+    }
 }
