@@ -28,5 +28,6 @@ fn main() {
     // day_8::question_two();
     // day_9::question_one();
     // day_9::question_two();
-    day_10::question_one();
+    // day_10::question_one();
+    // day_10::question_two();
 }
