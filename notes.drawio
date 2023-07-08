@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="BhptyLjr23Kal0yeoNKN" name="Day 8">
-        <mxGraphModel dx="527" dy="769" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="635" dy="769" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -976,14 +976,14 @@
         </mxGraphModel>
     </diagram>
     <diagram id="ZUaiI0TEsUv7ohDjT21S" name="Day 11">
-        <mxGraphModel dx="692" dy="570" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="635" dy="769" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="mlBjMVDgEFM2bJ1JYTVG-1" value="1. Monkey has list of items&lt;br&gt;2. Monkey has u32 of total items inspected&lt;br&gt;2. Items have worry levels&lt;br&gt;3. After each round, get the total number of items inspected" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="mlBjMVDgEFM2bJ1JYTVG-1" value="1. Monkey has list of items&lt;br&gt;2. Monkey has u32 of total items inspected&lt;br&gt;2. Items have worry levels&lt;br&gt;3. After each round, get the total number of items inspected" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="50" y="85" width="340" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="mlBjMVDgEFM2bJ1JYTVG-2" value="&lt;pre style=&quot;font-family: &amp;quot;Source Code Pro&amp;quot;, monospace; color: rgb(204, 204, 204); font-size: 13px; text-align: start; background-color: rgb(15, 15, 35);&quot;&gt;&lt;code style=&quot;font-family: &amp;quot;Source Code Pro&amp;quot;, monospace; position: relative; display: inline-block; margin: 0px; padding: 0px;&quot;&gt;Monkey 0:&lt;br&gt;  Monkey inspects an item with a worry level of 79.&lt;br&gt;    Worry level is multiplied by 19 to 1501.&lt;br&gt;    Monkey gets bored with item. Worry level is divided by 3 to 500.&lt;br&gt;    Current worry level is not divisible by 23.&lt;br&gt;    Item with worry level 500 is thrown to monkey 3.&lt;br&gt;  Monkey inspects an item with a worry level of 98.&lt;br&gt;    Worry level is multiplied by 19 to 1862.&lt;br&gt;    Monkey gets bored with item. Worry level is divided by 3 to 620.&lt;br&gt;    Current worry level is not divisible by 23.&lt;br&gt;    Item with worry level 620 is thrown to monkey 3.&lt;/code&gt;&lt;/pre&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="mlBjMVDgEFM2bJ1JYTVG-2" value="&lt;pre style=&quot;font-family: &amp;quot;Source Code Pro&amp;quot;, monospace; color: rgb(204, 204, 204); font-size: 13px; text-align: start; background-color: rgb(15, 15, 35);&quot;&gt;&lt;code style=&quot;font-family: &amp;quot;Source Code Pro&amp;quot;, monospace; position: relative; display: inline-block; margin: 0px; padding: 0px;&quot;&gt;Monkey 0:&lt;br&gt;  Monkey inspects an item with a worry level of 79.&lt;br&gt;    Worry level is multiplied by 19 to 1501.&lt;br&gt;    Monkey gets bored with item. Worry level is divided by 3 to 500.&lt;br&gt;    Current worry level is not divisible by 23.&lt;br&gt;    Item with worry level 500 is thrown to monkey 3.&lt;br&gt;  Monkey inspects an item with a worry level of 98.&lt;br&gt;    Worry level is multiplied by 19 to 1862.&lt;br&gt;    Monkey gets bored with item. Worry level is divided by 3 to 620.&lt;br&gt;    Current worry level is not divisible by 23.&lt;br&gt;    Item with worry level 620 is thrown to monkey 3.&lt;/code&gt;&lt;/pre&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="40" y="150" width="550" height="210" as="geometry"/>
                 </mxCell>
             </root>
